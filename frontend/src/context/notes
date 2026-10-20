@@ -1,0 +1,10 @@
+// AuthContext — Notes
+
+// AuthContext.jsx React application mein authentication ka central system hai. Iska kaam user ki login state ko manage karna aur login, register aur logout jaise functions ko poori application ke components ke liye available karwana hai. 
+// AuthProvider ke andar user state hoti hai jo batati hai ke currently user logged in hai ya nahi. Jab main.jsx mein <AuthProvider><App /></AuthProvider> likhte hain to <App /> automatically children ban kar AuthProvider ke andar aata hai, aur {children} ki jagah par App render hoti hai. AuthContext.Provider ke value mein { user, login, register, logout } dene ka matlab hai ke Provider ke andar jitne bhi components hain, woh useAuth() ke through in values ko access kar sakte hain. login, register aur logout functions automatically nahi chalte, balki jab Login, Signup ya Navbar jaisa component inhein call karta hai tab execute hote hain. For example Login page se login(email, password) call hota hai, jahan email aur password Login form se aate hain; phir AuthContext ka login function backend API ko request bhejta hai, backend user ko verify karke JWT token return karta hai, aur frontend us response ko localStorage mein save karta hai aur setUser(data) ke through React state update karta hai. localStorage isliye use hota hai taake browser refresh hone ke baad bhi login information available rahe. Isi wajah se useState ke initial function mein localStorage.getItem("user") se saved user read kiya jata hai. logout() mein localStorage.removeItem("user") se saved user/token delete hota hai aur setUser(null) se React state bhi clear ho jati hai. useAuth() sirf useContext(AuthContext) ka shortcut hai, jiski wajah se kisi bhi component mein easily const { user, login, logout } = useAuth() likh kar authentication system use kar sakte hain.
+
+
+
+// Local state — jab data ek component ka apna kaam ho.
+// Shared state / Context — jab multiple components ko ek hi data access karna ya uske updates dekhna hon.
+//jese cart main change hoga tu navbar ko bhi cahhiyeh , Cart ko bhi cahhiyeh , ProductDetaile ko bhi chahiyeh

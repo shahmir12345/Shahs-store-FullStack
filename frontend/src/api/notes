@@ -1,0 +1,17 @@
+// Is axios.js mein token save nahi ho raha. Yahan sirf get/read ho raha hai: baad main jab login karengen tu backend jwt token banaye ga aur login ki jahan se request aayi hogi wahan send kare ga aur ab frontend ko ye token mil jaayega aur hum is token ko localStorage mein save karenge.
+
+// axios.js frontend ka central API setup hai jahan hum backend ka common URL set karte hain aur login ke baad JWT token ko automatically protected requests ke headers mein attach karte hain. 
+
+//interceptor request bhejne se pehle check/modification karta hai request main aur req backend par bhejne se pehle jwt token ko attach karta hai. jo login ke time frontend ko milta hai backend se aur next protected route par janay ke liye request main jwt token attach karna zaruri hai. backend se verify karwanay ke liye
+
+//config ke andar request ki saari details hoti hain jaise method, url, headers, data etc. yahan authorizataion ke header main jwt token attach karte hain. aur backend bhi yehi header check karta hai aur verify karta hai. 
+
+
+
+// axios.create() → customized Axios instance.
+// baseURL → backend ka common URL.
+// interceptor → request bhejne se pehle request modify karta hai.
+// localStorage → login user/token temporarily persist karta hai.
+// Authorization: Bearer token → backend ke protect middleware ko JWT deta hai.
+// return config → modified request ko continue karta hai.
+// export default api → poori React app mein same Axios instance use hota hai.

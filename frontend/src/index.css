@@ -1,0 +1,88 @@
+@import "tailwindcss";
+
+
+/* Aam tor par hum har jagah colour ka code ya Tailwind ka colour likh sakte hain. Lekin yahan developer ne apne custom colour names banaye hain. 
+bhai yeh backtorund aur text both ke liye use kar saktay hu lekin overall websites main yehi colors use hon ge
+*/
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
+  --color-surface: #f8fafc;
+
+  --color-brand-50: #fff7ed;
+  --color-brand-100: #ffedd5;
+  --color-brand-500: #f97316;
+  --color-brand-600: #ea580c;
+  --color-brand-700: #c2410c;
+}
+
+/* C. @layer base — poori website ka default design
+    bg-surface: poori website ka default background halka grey.
+    text-ink: default text dark navy.
+    antialiased: text ki rendering ko smooth banane mein madad karta hai.
+    @apply: Tailwind ki utility classes ko CSS rule ke andar apply karta hai.
+*/
+@layer base {
+  body {
+    @apply bg-surface text-ink antialiased;
+  }
+}
+
+/* Yeh sabse useful hissa hai. Developer ne baar baar istemal hone wali styling ko chhoti classes mein jama kar diya hai. 
+
+# .btn:
+inline-flex: button ke andar icon aur text ko align kar sakte hain.
+items-center justify-center: content center mein.
+gap-2: icon aur text ke darmiyan gap.
+rounded-lg: rounded corners
+px-5 py-2.5: andar ki horizontal aur vertical spacing.
+text-sm font-semibold: chhota, relatively bold text.
+transition: hover waghera par changes smooth.
+disabled:opacity-50: disabled button halka nazar aaye.
+disabled:cursor-not-allowed: disabled button par not-allowed cursor.
+
+# .input
+Yeh Login, Signup aur Checkout ke inputs ke liye reusable style hai.
+- w-full: parent ki poori available width.
+- border border-line: halka grey border.
+- bg-white: white background.
+- px-3.5 py-2.5: input ke andar spacing.
+- outline-none: browser ka default focus outline remove karta hai.
+- focus:border-brand-500: click/focus par orange border.
+- focus:ring-2 focus:ring-brand-100: focus par halka orange ring.
+
+
+*/
+
+@layer components {
+  .container-page {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed bg-brand-600 text-white hover:bg-brand-700;
+  }
+
+  .btn-dark {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed bg-ink text-white hover:bg-slate-800;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-5 py-2.5 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed border border-line bg-white text-ink hover:bg-slate-50;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100;
+  }
+
+  .card {
+    @apply rounded-xl border border-line bg-white;
+  }
+}
