@@ -18,7 +18,13 @@ const app = express()
  * App ko yahan alag rakha hai aur server.js mein chalayenge, taake code saaf rahe.
  */
 
-app.use(cors())
+app.set("trust proxy", 1);
+
+const allowedOrigins = [ process.env.CLIENT_URL,"http://localhost:5173",].filter(Boolean);
+app.use(
+  cors({origin: allowedOrigins,})
+);
+
 app.use(express.json())
 app.use(express.urlencoded({extended : true}))
 
