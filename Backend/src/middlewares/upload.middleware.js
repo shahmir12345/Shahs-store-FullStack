@@ -3,8 +3,13 @@ const path = require("path");
 const fs = require("fs");
 
 //yahan folder create ho raha hai jahan files save hongi
-const dir = path.join(__dirname, "../../uploads");
-fs.mkdirSync(dir, { recursive: true });
+const dir = process.env.VERCEL
+  ? "/tmp"
+  : path.join(__dirname, "../../uploads");
+
+if (!process.env.VERCEL) {
+  fs.mkdirSync(dir, { recursive: true });
+}
 
 //kahan images ko save karni hai aur kia naam dena hai ,unique name using Date and random number
 const storage = multer.diskStorage({
