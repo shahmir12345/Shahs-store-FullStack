@@ -26,7 +26,8 @@ router.post("/", protectAdmin, (req, res) => {
       );
       res.json({ urls: results.map((r) => r.secure_url) });
     } catch (error) {
-      res.status(500).json({ message: "Image upload failed" });
+        console.error("Cloudinary error:", error);
+        res.status(500).json({ message: error.message || "Image upload failed" });
     }
   });
 });
