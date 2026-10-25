@@ -163,7 +163,7 @@ const ProductDetail = () => {
             )}
           </div>
 
-          <p className="mt-6 leading-relaxed text-slate-600">{product.description}</p>
+          <p className="mt-6 leading-relaxed text-slate-600 whitespace-pre-line">{product.description}</p>
 
           {/* //kabhie 1 se neechay and product.stock se upper nhi ja sakay ga */}
           {!soldOut && (
