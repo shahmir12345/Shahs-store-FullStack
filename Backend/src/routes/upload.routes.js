@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../middlewares/upload.middleware");
-const cloudinary = require("../config/cloudinary");
+const upload = require("../middlewares/upload.middleware").default;
+const cloudinary = require("../config/cloudinary").default;
 const { protectAdmin } = require("../middlewares/auth.middleware");
 
 const uploadToCloudinary = (buffer) =>
