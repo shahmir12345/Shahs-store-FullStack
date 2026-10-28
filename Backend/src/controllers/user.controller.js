@@ -41,7 +41,7 @@ exports.register = async (req, res) => {
     html: `
       <h2>Welcome, ${user.name}!</h2>
       <p>Your account has been created successfully.</p>
-      <p>Start shopping at <a href="${process.env.CLIENT_URL}">Shah's Store</a>.</p>
+      <p>Start shopping at <a href="https://shahs-store-full-stack-frontend.vercel.app/">Shah's Store</a>.</p>
     `,
      });
 

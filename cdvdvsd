@@ -1,0 +1,11 @@
+* [33mbcbcc57[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Add email on order and register
+[31m|[m * [33m51ef4a8[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Delete images/trousers directory
+[31m|[m[31m/[m  
+* [33m3ad1589[m additional files
+* [33me1bc67e[m additional files
+* [33m990cb26[m additional files
+* [33m140dfec[m additional files
+* [33m201100e[m additional files
+* [33me2c7a55[m additional files
+* [33m552ca9f[m adding cloudinary empty values in env.example
+* [33m755f4fb[m Preparing for Cloudinary file
