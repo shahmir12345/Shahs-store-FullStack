@@ -1,7 +1,7 @@
 const orderModel = require("../models/order.model");
 const productModel = require("../models/product.model");
 const cartModel = require("../models/cart.model");
-
+const sendEmail = require("../utils/sendEmail");
 
 // createOrder cart ko validate karta hai → cart ke products aur stock check karta hai → order ka snapshot banata hai
 //  → total calculate karta hai → order save karta hai → stock reduce karta hai → cart empty karta hai.
@@ -61,6 +61,25 @@ exports.createOrder = async (req, res) => {
 
         cart.items = []
         await cart.save()
+
+        const rows = orderItems
+        .map(
+            (i) =>
+            `<tr><td>${i.name} x ${i.quantity}</td><td align="right">Rs. ${(i.price * i.quantity).toLocaleString()}</td></tr>`
+        )
+        .join("");
+
+        await sendEmail({
+        to: req.user.email,
+        subject: `Order confirmed #${order._id.toString().slice(-6).toUpperCase()}`,
+        html: `
+            <h2>Thank you for your order, ${req.user.name}!</h2>
+            <table width="100%" cellpadding="6">${rows}</table>
+            <p><strong>Total: Rs. ${totalPrice.toLocaleString()}</strong></p>
+            <p>Delivery to: ${shippingAddress.address}, ${shippingAddress.city} (${shippingAddress.phone})</p>
+            <p>Payment: Cash on Delivery</p>
+        `,
+        });
 
         res.status(201).json(order)
 

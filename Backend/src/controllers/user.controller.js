@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
+const sendEmail = require("../utils/sendEmail");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -33,6 +34,16 @@ exports.register = async (req, res) => {
       email,
       password: hashed,
     });
+
+    await sendEmail({
+    to: user.email,
+    subject: "Welcome to Shah's Store!",
+    html: `
+      <h2>Welcome, ${user.name}!</h2>
+      <p>Your account has been created successfully.</p>
+      <p>Start shopping at <a href="${process.env.CLIENT_URL}">Shah's Store</a>.</p>
+    `,
+     });
 
     res.status(201).json({
       _id: user._id,
