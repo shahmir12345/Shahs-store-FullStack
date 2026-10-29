@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="container-page grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <p className="text-2xl font-extrabold text-white">
-            My<span className="text-brand-500">Store</span>
+            Shah's <span className="text-brand-500">Store</span>
           </p>
           <p className="mt-3 text-sm text-slate-400">
             Quality products, honest prices, delivered to your door.
@@ -35,7 +35,7 @@ const Footer = () => {
         <div>
           <p className="mb-3 font-semibold text-white">Contact</p>
           <ul className="space-y-2 text-sm text-slate-400">
-            <li>support@Shah's_store.com</li>
+            <li>shahmirkhan973@gmail.com</li>
             <li>+92 317 6775852</li>
             <li>Peshawar, Pakistan</li>
           </ul>

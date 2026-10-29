@@ -3,9 +3,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { User, Mail, Lock } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import AuthLayout from "../components/AuthLayout";
+import { GoogleLogin } from "@react-oauth/google";
 
 const Signup = () => {
-  const { register } = useAuth();
+  const { register, googleLogin } = useAuth();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -99,6 +100,23 @@ const Signup = () => {
           {loading ? "Creating account..." : "Create account"}
         </button>
       </form>
+      <div className="my-4 flex items-center gap-3 text-xs text-muted">
+        <div className="h-px flex-1 bg-line" /> OR <div className="h-px flex-1 bg-line" />
+      </div>
+
+      <div className="flex justify-center">
+        <GoogleLogin
+          onSuccess={async (res) => {
+            try {
+              await googleLogin(res.credential);
+              navigate("/");
+            } catch (err) {
+              setError(err.response?.data?.message || "Google sign-in failed");
+            }
+          }}
+          onError={() => setError("Google sign-in failed")}
+        />
+      </div>
     </AuthLayout>
   );
 };

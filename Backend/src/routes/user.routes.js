@@ -14,7 +14,9 @@ const router = express.Router();
 const {register, login, getProfile} = require('../controllers/user.controller')
 const {adminLogin} = require('../controllers/admin.controller')
 const {protect} = require('../middlewares/auth.middleware')
+const {googleLogin} = require("../controllers/user.controller")
 
+router.post("/google", googleLogin);
 router.post('/register', register)
 router.post('/login', login)
 router.post("/admin/login", adminLogin);

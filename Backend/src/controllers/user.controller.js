@@ -3,6 +3,10 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
 const sendEmail = require("../utils/sendEmail");
 
+// OAuth2Client Google ki library ka class hai jo Google authentication ke kaam aata hai.
+const { OAuth2Client } = require("google-auth-library");
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 };
@@ -66,6 +70,10 @@ exports.login = async (req, res) => {
         return res.status(401).json({ message: "Invalid Email or Password" });
     }
 
+    if (user.authProvider === "google" || !user.password) {
+      return res.status(400).json({ message: "This account uses Google sign-in. Please continue with Google." });
+    }
+
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
         return res.status(401).json({ message: "Invalid Email or Password" });
@@ -90,3 +98,62 @@ exports.login = async (req, res) => {
 exports.getProfile = async (req, res) => {
      res.json(req.user)
 }
+
+/** 
+ * Yahan frontend backend ko credential naam ki property mein Google ka ID token bhejega.
+ * verifyIdToken() token ki authenticity, validity aur audience verify karta hai.
+ * audience check karta hai ke token tumhari configured Google application ke liye hai.
+ * getPayload() se verified user ki information milti hai.
+ * email user ka email hai, name uska naam, sub Google ki unique user ID, aur email_verified batata hai ke Google ne email verify kiya hai ya nahi.
+ * Agar email verified nahi hai, to hum login reject karte hain.
+*/
+
+exports.googleLogin = async (req, res) => {
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: "Google credential is required" });
+    }
+
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const { email, name, sub, email_verified } = ticket.getPayload();
+
+    // Agar email verified nahi hai, to hum login reject karte hain.
+    if (!email_verified) {
+      return res.status(400).json({ message: "Google email is not verified" });
+    }
+
+
+    let user = await userModel.findOne({ googleId: sub });
+
+    if (!user) {
+      const emailUser = await userModel.findOne({ email: email.toLowerCase() });
+
+      if (emailUser) {
+        return res.status(409).json({
+          message: "This email is registered with a password. Please log in with email and password.",
+        });
+      }
+
+      user = await userModel.create({
+        name,
+        email,
+        googleId: sub,
+        authProvider: "google",
+      });
+    }
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(401).json({ message: "Google sign-in failed" });
+  }
+};
