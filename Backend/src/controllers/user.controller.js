@@ -146,6 +146,16 @@ exports.googleLogin = async (req, res) => {
       });
     }
 
+    await sendEmail({
+        to: user.email,
+        subject: "Welcome to Shah's Store!",
+        html: `
+          <h2>Welcome, ${user.name}!</h2>
+          <p>Your account has been created successfully with Google Account.</p>
+          <p>Start shopping at <a href="https://shahs-store-full-stack-frontend.vercel.app/">Shah's Store</a>.</p>
+        `,
+     });
+
     res.json({
       _id: user._id,
       name: user.name,
