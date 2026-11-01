@@ -17,6 +17,7 @@ import ManageOrders from "./pages/admin/ManageOrders";
 import GuestRoute from "./components/GuestRoute";
 import Footer from "./components/Footer";
 import AdminLogin from "./pages/admin/AdminLogin";
+import VerifyEmail from "./pages/VerifyEmail";
 
 function App(){
 
@@ -28,6 +29,7 @@ function App(){
           <Route path="/" element={<Home/>}/>
           <Route path="/products" element={<Products/>}/>
           <Route path="/products/:id" element={<ProductDetail/>}/>
+          <Route path="/verify-email" element={<VerifyEmail />} />
           
           <Route 
             path="/login" 

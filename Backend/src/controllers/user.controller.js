@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
 const sendEmail = require("../utils/sendEmail");
+const { issueOtp, checkOtp, secondsUntilResend, MAX_ATTEMPTS } = require("../utils/otp");
 
 // OAuth2Client Google ki library ka class hai jo Google authentication ke kaam aata hai.
 const { OAuth2Client } = require("google-auth-library");
@@ -20,42 +21,119 @@ const generateToken = (id) => {
 
 exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, password } = req.body;
+    const email = req.body.email?.toLowerCase().trim();
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
-
-    const userExists = await userModel.findOne({ email });
-    if (userExists) {
-      return res.status(400).json({ message: "Email already exists" });
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
     const hashed = await bcrypt.hash(password, 10);
+    let user = await userModel.findOne({ email });
 
-    const user = await userModel.create({
-      name,
-      email,
-      password: hashed,
-    });
+    if (user && (user.isVerified || user.authProvider === "google")) {
+      return res.status(400).json({ message: "Email already registered" });
+    }
 
-    await sendEmail({
-    to: user.email,
-    subject: "Welcome to Shah's Store!",
-    html: `
-      <h2>Welcome, ${user.name}!</h2>
-      <p>Your account has been created successfully.</p>
-      <p>Start shopping at <a href="https://shahs-store-full-stack-frontend.vercel.app/">Shah's Store</a>.</p>
-    `,
-     });
+    if (user) {
+      user.name = name;
+      user.password = hashed;
+      const wait = secondsUntilResend(user);
+      if (wait > 0) {
+        return res.status(429).json({ message: `Please wait ${wait}s before requesting a new code`, retryAfter: wait });
+      }
+    } else {
+      user = new userModel({ name, email, password: hashed });
+    }
+
+    await issueOtp(user);
 
     res.status(201).json({
+      message: "Verification code sent to your email",
+      email: user.email,
+      needsVerification: true,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const email = req.body.email?.toLowerCase().trim();
+    const { otp } = req.body;
+
+    if (!email || !otp) {
+      return res.status(400).json({ message: "Email and code are required" });
+    }
+
+    const user = await userModel.findOne({ email }).select("+otpHash");
+    if (!user || user.isVerified || !user.otpHash) {
+      return res.status(400).json({ message: "Invalid or expired code" });
+    }
+
+    if (user.otpExpires < new Date()) {
+      user.otpHash = undefined;
+      await user.save();
+      return res.status(400).json({ message: "Code expired. Please request a new one." });
+    }
+
+    if (!checkOtp(user, otp)) {
+      user.otpAttempts += 1;
+      if (user.otpAttempts >= MAX_ATTEMPTS) {
+        user.otpHash = undefined;
+        user.otpExpires = undefined;
+        await user.save();
+        return res.status(429).json({ message: "Too many attempts. Please request a new code." });
+      }
+      await user.save();
+      return res.status(400).json({
+        message: `Incorrect code. ${MAX_ATTEMPTS - user.otpAttempts} attempts left.`,
+      });
+    }
+
+    user.isVerified = true;
+    user.otpHash = undefined;
+    user.otpExpires = undefined;
+    user.otpAttempts = 0;
+    await user.save();
+
+    await sendEmail({
+      to: user.email,
+      subject: "Welcome to MyStore!",
+      html: `<h2>Welcome, ${user.name}!</h2><p>Your email is verified. Happy shopping!</p>`,
+    });
+
+    res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
+      isVerified: true,
       token: generateToken(user._id),
     });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.resendOtp = async (req, res) => {
+  try {
+    const email = req.body.email?.toLowerCase().trim();
+    const user = email ? await userModel.findOne({ email }) : null;
+
+    if (user && !user.isVerified && user.authProvider !== "google") {
+      const wait = secondsUntilResend(user);
+      if (wait > 0) {
+        return res.status(429).json({ message: `Please wait ${wait}s before requesting a new code`, retryAfter: wait });
+      }
+      await issueOtp(user);
+    }
+
+    res.json({ message: "If the account exists, a new code has been sent" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -77,6 +155,16 @@ exports.login = async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
         return res.status(401).json({ message: "Invalid Email or Password" });
+    }
+
+    if (!user.isVerified) {
+    const wait = secondsUntilResend(user);
+    if (wait === 0) await issueOtp(user);
+    return res.status(403).json({
+      message: "Please verify your email. We sent you a code.",
+      needsVerification: true,
+      email: user.email,
+    });
     }
 
     res.json({
@@ -143,6 +231,7 @@ exports.googleLogin = async (req, res) => {
         email,
         googleId: sub,
         authProvider: "google",
+        isVerified: true,
       });
     }
 

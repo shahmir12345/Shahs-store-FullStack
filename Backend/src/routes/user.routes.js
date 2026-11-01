@@ -11,11 +11,13 @@ const router = express.Router();
  * 2. const {register, login} = require('../controllers/user.controller')
  * 3. const { register: registerUser } = require('../controllers/user.controller') for Renaming 
  */
-const {register, login, getProfile} = require('../controllers/user.controller')
+const {register, login, getProfile, verifyEmail, resendOtp} = require('../controllers/user.controller')
 const {adminLogin} = require('../controllers/admin.controller')
 const {protect} = require('../middlewares/auth.middleware')
 const {googleLogin} = require("../controllers/user.controller")
 
+router.post("/verify-email", verifyEmail);
+router.post("/resend-otp", resendOtp);
 router.post("/google", googleLogin);
 router.post('/register', register)
 router.post('/login', login)

@@ -86,3 +86,13 @@ Yeh Login, Signup aur Checkout ke inputs ke liye reusable style hai.
     @apply rounded-xl border border-line bg-white;
   }
 }
+
+
+@keyframes pop-in {
+  0% { transform: scale(0.3); opacity: 0; }
+  70% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.pop-in {
+  animation: pop-in 0.5s ease-out both;
+}

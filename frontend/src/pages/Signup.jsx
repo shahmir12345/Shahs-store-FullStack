@@ -23,8 +23,8 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      await register(form.name, form.email, form.password);
-      navigate("/");
+      const data = await register(form.name, form.email, form.password);
+      navigate("/verify-email", { state: { email: data.email } });
     } catch (err) {
       setError(err.response?.data?.message || "Something went wrong");
     } finally {

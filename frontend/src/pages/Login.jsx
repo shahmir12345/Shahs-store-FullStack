@@ -23,6 +23,10 @@ const Login = () => {
       await login(email, password);
       navigate("/");
     } catch (err) {
+      if (err.response?.data?.needsVerification) {
+        navigate("/verify-email", { state: { email: err.response.data.email } });
+        return;
+      }
       setError(err.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
@@ -79,22 +83,22 @@ const Login = () => {
           {loading ? "Logging in..." : "Log in"}
         </button>
       </form>
-      
+
       <div className="my-4 flex items-center gap-3 text-xs text-muted">
         <div className="h-px flex-1 bg-line" /> OR <div className="h-px flex-1 bg-line" />
       </div>
-        
+
       <div className="flex justify-center">
         <GoogleLogin
-            onSuccess={async (res) => {
-              try {
-                await googleLogin(res.credential);
-                navigate("/");
-              } catch (err) {
-                setError(err.response?.data?.message || "Google sign-in failed");
-              }
-            }}
-            onError={() => setError("Google sign-in failed")}
+          onSuccess={async (res) => {
+            try {
+              await googleLogin(res.credential);
+              navigate("/");
+            } catch (err) {
+              setError(err.response?.data?.message || "Google sign-in failed");
+            }
+          }}
+          onError={() => setError("Google sign-in failed")}
         />
       </div>
     </AuthLayout>
