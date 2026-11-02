@@ -18,6 +18,8 @@ import GuestRoute from "./components/GuestRoute";
 import Footer from "./components/Footer";
 import AdminLogin from "./pages/admin/AdminLogin";
 import VerifyEmail from "./pages/VerifyEmail";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 function App(){
 
@@ -68,6 +70,14 @@ function App(){
           <Route
             path="/admin/login"
             element={<GuestRoute><AdminLogin /></GuestRoute>}
+          />
+          <Route 
+            path="/forgot-password" 
+            element={<GuestRoute><ForgotPassword /></GuestRoute>} 
+          />
+          <Route 
+            path="/reset-password/:token" 
+            element={<GuestRoute><ResetPassword /></GuestRoute>} 
           />
         </Routes>
       </main>

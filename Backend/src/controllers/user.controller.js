@@ -2,11 +2,17 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user.model");
 const sendEmail = require("../utils/sendEmail");
+const crypto = require("crypto");
 const { issueOtp, checkOtp, secondsUntilResend, MAX_ATTEMPTS } = require("../utils/otp");
 
 // OAuth2Client Google ki library ka class hai jo Google authentication ke kaam aata hai.
 const { OAuth2Client } = require("google-auth-library");
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const RESET_TTL_MS = 15 * 60 * 1000;
+const RESET_GAP_MS = 60 * 1000;
+
+const hashToken = (token) => crypto.createHash("sha256").update(token).digest("hex");
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "7d" });
@@ -254,5 +260,95 @@ exports.googleLogin = async (req, res) => {
     });
   } catch (error) {
     res.status(401).json({ message: "Google sign-in failed" });
+  }
+};
+
+exports.forgotPassword = async (req, res) => {
+  const reply = { message: "If this email is registered, we sent a reset link." };
+
+  try {
+    const email = req.body.email?.toLowerCase().trim();
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await userModel.findOne({ email });
+    if (!user) return res.json(reply);
+
+    if (user.authProvider === "google" || !user.password) {
+      await sendEmail({
+        to: user.email,
+        subject: "Password reset request",
+        html: `<h2>Password reset</h2>
+          <p>Your account uses Google sign-in, so it has no password to reset.</p>
+          <p>Please log in with the "Continue with Google" button.</p>`,
+      });
+      return res.json(reply);
+    }
+
+    if (user.resetTokenExpires) {
+      const sentAt = user.resetTokenExpires.getTime() - RESET_TTL_MS;
+      if (Date.now() - sentAt < RESET_GAP_MS) return res.json(reply);
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+    user.resetTokenHash = hashToken(token);
+    user.resetTokenExpires = new Date(Date.now() + RESET_TTL_MS);
+    await user.save();
+
+    const link = `${process.env.CLIENT_URL}/reset-password/${token}`;
+    await sendEmail({
+      to: user.email,
+      subject: "Reset your password",
+      html: `
+        <h2>Reset your password</h2>
+        <p>Click the button below to choose a new password. This link expires in 15 minutes and works only once.</p>
+        <p style="margin:24px 0">
+          <a href="${link}" style="background:#ea580c;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Reset password</a>
+        </p>
+        <p style="font-size:13px;color:#64748b">If the button does not work, copy this link:<br>${link}</p>
+        <p style="font-size:13px;color:#64748b">If you did not ask for this, you can ignore this email.</p>
+      `,
+    });
+
+    res.json(reply);
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+
+    if (!token || !password) {
+      return res.status(400).json({ message: "Token and new password are required" });
+    }
+    if (password.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    }
+
+    const user = await userModel.findOne({
+      resetTokenHash: hashToken(String(token)),
+      resetTokenExpires: { $gt: new Date() },
+    });
+
+    if (!user || user.authProvider === "google") {
+      return res.status(400).json({ message: "This reset link is invalid or has expired." });
+    }
+
+    user.password = await bcrypt.hash(password, 10);
+    user.passwordChangedAt = new Date();
+    user.resetTokenHash = undefined;
+    user.resetTokenExpires = undefined;
+    user.isVerified = true;
+    user.otpHash = undefined;
+    user.otpExpires = undefined;
+    user.otpAttempts = 0;
+    await user.save();
+
+    res.json({ message: "Password updated. You can log in now." });
+  } catch (error) {
+    res.status(500).json({ message: "Something went wrong" });
   }
 };

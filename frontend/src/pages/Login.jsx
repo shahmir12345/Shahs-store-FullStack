@@ -64,7 +64,7 @@ const Login = () => {
           </div>
         </div>
 
-        <div>
+        <div className="flex flex-col gap-2">
           <label className="mb-1.5 block text-sm font-medium">Password</label>
           <div className="relative">
             <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
@@ -77,6 +77,9 @@ const Login = () => {
               required
             />
           </div>
+          <Link to="/forgot-password" className="text-sm self-end font-semibold text-brand-600 hover:underline">
+            Forgot password?
+          </Link>
         </div>
 
         <button type="submit" disabled={loading} className="btn-primary w-full !py-3">
