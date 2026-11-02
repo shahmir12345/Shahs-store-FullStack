@@ -26,9 +26,12 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-white/90 backdrop-blur">
-      <div className="container-page flex h-16 items-center justify-between">
-        <Link to="/" className="text-2xl font-extrabold tracking-tight p-3">
-          Shah's <span className="text-brand-600">Store</span>
+      <div className="container-page flex h-20 items-center justify-between">
+        <Link to="/" className="flex items-center gap-2">
+          <img src="/logo.png" alt="Shah's Store" className="h-25 w-30 object-contain sm:h-24 sm:w-35" />
+          <span className="text-lg font-extrabold tracking-tight sm:text-xl">
+            Shah's <span className="text-brand-600">Store</span>
+          </span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-8">

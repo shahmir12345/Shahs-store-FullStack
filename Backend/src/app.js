@@ -27,10 +27,9 @@ app.use(
 
 app.use(express.json())
 app.use(express.urlencoded({extended : true}))
+app.use(express.static(path.join(__dirname, 'public')))
 
 // Jab browser is URL ko request karta hai, Express folder mein shoe.png dhoondta hai aur image ka content return karta hai. Isi liye React mein yeh kaam kar sakta hai:
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
-
 app.use("/upload", uploadImageRouter);
 app.use("/admin", adminRouter);
 app.use('/users', userRouter)

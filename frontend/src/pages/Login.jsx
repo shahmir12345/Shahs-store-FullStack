@@ -35,6 +35,7 @@ const Login = () => {
 
   return (
     <AuthLayout
+      logoSide="left"
       title="Welcome back"
       subtitle="Log in to continue shopping"
       footer={

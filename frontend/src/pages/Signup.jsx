@@ -34,6 +34,7 @@ const Signup = () => {
 
   return (
     <AuthLayout
+      logoSide="left"
       title="Create your account"
       subtitle="It only takes a minute"
       footer={

@@ -5,7 +5,17 @@ import { Copyright } from 'lucide-react';
 const Footer = () => {
   return (
     <footer className="mt-16 bg-ink text-slate-300">
-      <div className="container-page grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="container-page grid gap-8 py-12 sm:grid-cols-2 lg:grid-cols-5 items-center">
+        <div className="flex items-center justify-center sm:justify-start">
+          <Link to="/" className="inline-flex">
+            <img
+              src="/logo.png"
+              alt="Shah's Store"
+              className="h-30 w-50 object-contain sm:h-44 sm:w-44 lg:h-35 lg:w-68"
+            />
+          </Link>
+        </div>
+
         <div>
           <p className="text-2xl font-extrabold text-white">
             Shah's <span className="text-brand-500">Store</span>
