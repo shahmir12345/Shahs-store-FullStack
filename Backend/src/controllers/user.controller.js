@@ -109,8 +109,55 @@ exports.verifyEmail = async (req, res) => {
 
     await sendEmail({
       to: user.email,
-      subject: "Welcome to MyStore!",
-      html: `<h2>Welcome, ${user.name}!</h2><p>Your email is verified. Happy shopping!</p>`,
+      subject: "Welcome to Shah's Store – Your Shopping Journey Begins!",
+      html: `
+        <div style="text-align:center;">
+          <h2 style="color:#153F35;font-size:25px;margin-bottom:12px;">
+            Welcome to Shah's Store, ${user.name}!
+          </h2>
+
+          <p style="font-size:16px;color:#334155;">
+            We're excited to have you here!
+          </p>
+        </div>
+
+        <p>
+          Your email address has been successfully verified, and your account
+          is now ready to use. You're officially part of the Shah's Store family!
+        </p>
+
+        <p>
+          Discover products you'll love, explore our latest collections, and
+          enjoy a smooth and convenient shopping experience — all in one place.
+        </p>
+
+        <div style="background:#f0fdf4;border-left:4px solid #1F6F5C;padding:14px 16px;margin:24px 0;border-radius:6px;">
+          <strong style="color:#153F35;">Your account is ready!</strong>
+          <p style="margin:6px 0 0;color:#334155;">
+            You can now sign in, explore our store, add products to your cart,
+            and place your orders.
+          </p>
+        </div>
+
+        <div style="text-align:center;margin:28px 0;">
+          <a
+            href="https://shahs-store-full-stack-frontend.vercel.app/"
+            style="display:inline-block;background:#153F35;color:#ffffff;text-decoration:none;padding:12px 26px;border-radius:6px;font-weight:bold;"
+          >
+            Start Shopping
+          </a>
+        </div>
+
+        <p>
+          Thank you for choosing Shah's Store. We look forward to being
+          part of your shopping experience!
+        </p>
+
+        <p style="margin-top:24px;">
+          Happy Shopping!<br/>
+          <strong style="color:#153F35;">Team Shah's Store</strong>
+        </p>
+      `
     });
 
     res.json({
@@ -242,14 +289,58 @@ exports.googleLogin = async (req, res) => {
     }
 
     await sendEmail({
-        to: user.email,
-        subject: "Welcome to Shah's Store!",
-        html: `
-          <h2>Welcome, ${user.name}!</h2>
-          <p>Your account has been created successfully with Google Account.</p>
-          <p>Start shopping at <a href="https://shahs-store-full-stack-frontend.vercel.app/">Shah's Store</a>.</p>
-        `,
-     });
+      to: user.email,
+      subject: "Welcome to Shah's Store – Your Shopping Journey Begins!",
+      html: `
+        <div style="text-align:center;">
+          <h2 style="color:#153F35;font-size:25px;margin-bottom:12px;">
+            Welcome to Shah's Store, ${user.name}!
+          </h2>
+
+          <p style="font-size:16px;color:#334155;">
+            We're delighted to have you on board!
+          </p>
+        </div>
+
+        <p>
+          Your Shah's Store account has been successfully created using your
+          Google Account. We're excited to welcome you to our shopping community!
+        </p>
+
+        <p>
+          Your account is ready, and you can now explore our collection,
+          discover products you love, and enjoy a smooth and convenient
+          shopping experience.
+        </p>
+
+        <div style="background:#f0fdf4;border-left:4px solid #1F6F5C;padding:14px 16px;margin:24px 0;border-radius:6px;">
+          <strong style="color:#153F35;">You're all set!</strong>
+          <p style="margin:6px 0 0;color:#334155;">
+            Simply sign in using your Google Account whenever you want to
+            explore our store or manage your orders.
+          </p>
+        </div>
+
+        <div style="text-align:center;margin:28px 0;">
+          <a
+            href="https://shahs-store-full-stack-frontend.vercel.app/"
+            style="display:inline-block;background:#153F35;color:#ffffff;text-decoration:none;padding:12px 26px;border-radius:6px;font-weight:bold;"
+          >
+            Start Shopping
+          </a>
+        </div>
+
+        <p>
+          Thank you for choosing Shah's Store. We look forward to making
+          your shopping experience enjoyable!
+        </p>
+
+        <p style="margin-top:24px;">
+          Happy Shopping!<br/>
+          <strong style="color:#153F35;">Team Shah's Store</strong>
+        </p>
+      `,
+    });
 
     res.json({
       _id: user._id,
@@ -278,11 +369,59 @@ exports.forgotPassword = async (req, res) => {
     if (user.authProvider === "google" || !user.password) {
       await sendEmail({
         to: user.email,
-        subject: "Password reset request",
-        html: `<h2>Password reset</h2>
-          <p>Your account uses Google sign-in, so it has no password to reset.</p>
-          <p>Please log in with the "Continue with Google" button.</p>`,
+        subject: "Your Account Uses Google Sign-In – Shah's Store",
+        html: `
+          <div style="text-align:center;">
+            <h2 style="color:#153F35;font-size:25px;margin-bottom:12px;">
+              No Password Reset Needed!
+            </h2>
+
+            <p style="font-size:16px;color:#334155;">
+              Your Shah's Store account is linked to Google.
+            </p>
+          </div>
+
+          <p>
+            We received a request to reset the password associated with
+            your Shah's Store account.
+          </p>
+
+          <p>
+            However, your account was created using <strong>Google Sign-In</strong>,
+            which means you don't have a separate Shah's Store password to reset.
+          </p>
+
+          <div style="background:#f0fdf4;border-left:4px solid #1F6F5C;padding:14px 16px;margin:24px 0;border-radius:6px;">
+            <strong style="color:#153F35;">Your account is already set up!</strong>
+
+            <p style="margin:6px 0 0;color:#334155;">
+              You can continue accessing your Shah's Store account securely
+              by signing in with the same Google Account you used when
+              creating your account.
+            </p>
+          </div>
+
+          <div style="text-align:center;margin:28px 0;">
+            <a
+              href="https://shahs-store-full-stack-frontend.vercel.app/login"
+              style="display:inline-block;background:#153F35;color:#ffffff;text-decoration:none;padding:12px 26px;border-radius:6px;font-weight:bold;"
+            >
+              Continue with Google
+            </a>
+          </div>
+
+          <p>
+            If you didn't request a password reset, no action is needed.
+            Your account remains safe and unchanged.
+          </p>
+
+          <p style="margin-top:24px;">
+            Thank you for choosing Shah's Store!<br/>
+            <strong style="color:#153F35;">Team Shah's Store</strong>
+          </p>
+        `,
       });
+
       return res.json(reply);
     }
 
@@ -299,15 +438,76 @@ exports.forgotPassword = async (req, res) => {
     const link = `${process.env.CLIENT_URL}/reset-password/${token}`;
     await sendEmail({
       to: user.email,
-      subject: "Reset your password",
+      subject: "Password Reset Request – Shah's Store",
       html: `
-        <h2>Reset your password</h2>
-        <p>Click the button below to choose a new password. This link expires in 15 minutes and works only once.</p>
-        <p style="margin:24px 0">
-          <a href="${link}" style="background:#ea580c;color:#ffffff;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold">Reset password</a>
+        <div style="text-align:center;">
+          <h2 style="color:#153F35;font-size:25px;margin-bottom:12px;">
+            Reset Your Password
+          </h2>
+
+          <p style="font-size:16px;color:#334155;">
+            Let's get you back into your account!
+          </p>
+        </div>
+
+        <p>
+          We received a request to reset the password associated with your
+          Shah's Store account. No worries! You can create a new password
+          by clicking the button below.
         </p>
-        <p style="font-size:13px;color:#64748b">If the button does not work, copy this link:<br>${link}</p>
-        <p style="font-size:13px;color:#64748b">If you did not ask for this, you can ignore this email.</p>
+
+        <div style="background:#f8fafc;border:1px solid #e2e8f0;padding:20px 16px;margin:24px 0;border-radius:10px;text-align:center;">
+          <h3 style="color:#153F35;margin:0 0 10px;">
+            Password Reset Request
+          </h3>
+
+          <p style="color:#475569;margin:0;">
+            Click the button below to securely choose a new password
+            for your account.
+          </p>
+
+          <div style="margin:24px 0 8px;">
+            <a
+              href="${link}"
+              style="display:inline-block;background:#153F35;color:#ffffff;text-decoration:none;padding:13px 28px;border-radius:6px;font-weight:bold;font-size:15px;"
+            >
+              Reset Password
+            </a>
+          </div>
+        </div>
+
+        <div style="background:#fff7ed;border-left:4px solid #E2982F;padding:14px 16px;margin:24px 0;border-radius:6px;">
+          <strong style="color:#9a5b0a;">Important: Link Expiry</strong>
+
+          <p style="margin:6px 0 0;color:#7c5a32;">
+            For your security, this password reset link expires in
+            <strong>15 minutes</strong> and can only be used once.
+            Please complete the process before it expires.
+          </p>
+        </div>
+
+        <p style="color:#334155;">
+          <strong>Having trouble with the button?</strong>
+          Copy and paste the following link into your browser:
+        </p>
+
+        <p style="font-size:13px;word-break:break-all;background:#f8fafc;padding:12px;border-radius:6px;">
+          <a href="${link}" style="color:#1F6F5C;">
+            ${link}
+          </a>
+        </p>
+
+        <p>
+          <strong>Security Reminder:</strong> If you did not request a
+          password reset, you can safely ignore this email. Your current
+          password will remain unchanged. Never share your password
+          reset link with anyone.
+        </p>
+
+        <p style="margin-top:24px;">
+          Thank you for choosing Shah's Store!<br/>
+          <strong style="color:#153F35;">Team Shah's Store</strong>
+        </p>
       `,
     });
 

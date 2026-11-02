@@ -71,13 +71,97 @@ exports.createOrder = async (req, res) => {
 
         await sendEmail({
         to: req.user.email,
-        subject: `Order confirmed #${order._id.toString().slice(-6).toUpperCase()}`,
+        subject: `Your Order is Confirmed! #${order._id.toString().slice(-6).toUpperCase()}`,
         html: `
-            <h2>Thank you for your order, ${req.user.name}!</h2>
-            <table width="100%" cellpadding="6">${rows}</table>
-            <p><strong>Total: Rs. ${totalPrice.toLocaleString()}</strong></p>
-            <p>Delivery to: ${shippingAddress.address}, ${shippingAddress.city} (${shippingAddress.phone})</p>
-            <p>Payment: Cash on Delivery</p>
+            <div style="text-align:center;">
+            <h2 style="color:#153F35;font-size:25px;margin-bottom:12px;">
+                Thank You for Your Order, ${req.user.name}!
+            </h2>
+
+            <p style="font-size:16px;color:#334155;">
+                Your order has been successfully placed!
+            </p>
+            </div>
+
+            <div style="background:#f0fdf4;border-left:4px solid #1F6F5C;padding:14px 16px;margin:24px 0;border-radius:6px;">
+            <strong style="color:#153F35;font-size:16px;">
+                <span style="color:#1F6F5C;">&#10003;</span> Order Confirmed
+            </strong>
+
+            <p style="margin:6px 0 0;color:#334155;">
+                We've received your order and it is now being processed.
+                Thank you for shopping with Shah's Store!
+            </p>
+            </div>
+
+            <div style="margin:24px 0;">
+            <h3 style="color:#153F35;font-size:18px;margin-bottom:12px;">
+                Order Details
+            </h3>
+
+            <p style="margin:6px 0;color:#334155;">
+                <strong>Order ID:</strong>
+                #${order._id.toString().slice(-6).toUpperCase()}
+            </p>
+
+            <table width="100%" cellpadding="8" cellspacing="0"
+                style="border-collapse:collapse;font-size:14px;color:#334155;">
+                ${rows}
+            </table>
+
+            <div style="text-align:right;background:#f8fafc;padding:14px;margin-top:12px;border-radius:6px;">
+                <strong style="font-size:18px;color:#153F35;">
+                Total Amount: Rs. ${totalPrice.toLocaleString()}
+                </strong>
+            </div>
+            </div>
+
+            <div style="margin:28px 0;">
+            <h3 style="color:#153F35;font-size:18px;margin-bottom:12px;">
+                Delivery Information
+            </h3>
+
+            <div style="background:#f8fafc;padding:16px;border-radius:8px;color:#334155;">
+                <p style="margin:5px 0;">
+                <strong>Delivery Address:</strong><br/>
+                ${shippingAddress.address}, ${shippingAddress.city}
+                </p>
+
+                <p style="margin:12px 0 5px;">
+                <strong>Contact Number:</strong><br/>
+                ${shippingAddress.phone}
+                </p>
+            </div>
+            </div>
+
+            <div style="background:#fff7ed;border-left:4px solid #E2982F;padding:14px 16px;margin:24px 0;border-radius:6px;">
+            <strong style="color:#9a5b0a;">Payment Method: Cash on Delivery</strong>
+
+            <p style="margin:6px 0 0;color:#7c5a32;">
+                Please keep the total order amount ready when your package
+                arrives. You can pay directly to the delivery person.
+            </p>
+            </div>
+
+            <div style="text-align:center;margin:28px 0;">
+            <a
+                href="https://shahs-store-full-stack-frontend.vercel.app/"
+                style="display:inline-block;background:#153F35;color:#ffffff;text-decoration:none;padding:12px 26px;border-radius:6px;font-weight:bold;"
+            >
+                Continue Shopping
+            </a>
+            </div>
+
+            <p>
+            We truly appreciate your trust in Shah's Store. Your satisfaction
+            matters to us, and we're committed to making your shopping
+            experience smooth and enjoyable.
+            </p>
+
+            <p style="margin-top:24px;">
+            Thank you for shopping with us!<br/>
+            <strong style="color:#153F35;">Team Shah's Store</strong>
+            </p>
         `,
         });
 
