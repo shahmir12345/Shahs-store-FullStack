@@ -12,16 +12,15 @@ const router = express.Router();
  * 3. const { register: registerUser } = require('../controllers/user.controller') for Renaming 
  */
 const {register, login, getProfile, verifyEmail, resendOtp} = require('../controllers/user.controller')
-const {adminLogin} = require('../controllers/admin.controller')
 const {protect} = require('../middlewares/auth.middleware')
 const {googleLogin} = require("../controllers/user.controller")
+const {authLimiter, otpLimiter} = require("../middlewares/rateLimit.middleware")
 
-router.post("/verify-email", verifyEmail);
-router.post("/resend-otp", resendOtp);
-router.post("/google", googleLogin);
-router.post('/register', register)
-router.post('/login', login)
-router.post("/admin/login", adminLogin);
+router.post("/verify-email", otpLimiter, verifyEmail);
+router.post("/resend-otp", otpLimiter, resendOtp);
+router.post("/google", authLimiter, googleLogin);
+router.post('/register', authLimiter, register)
+router.post('/login', authLimiter, login)
 // protect → user ko identify karke req.user mein rakhta hai.
 // getProfile → us already-found user ko response mein bhej deta hai.
 router.post('/profile', protect, getProfile) // protect middleware se user ko authenticate karte hain, agar token valid hai to getProfile chalega.
