@@ -16,6 +16,7 @@ const ManageOrders = () => {
   const [filter, setFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchId, setSearchId] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -41,13 +42,33 @@ const ManageOrders = () => {
     }
   };
 
-  const visibleOrders = filter ? orders.filter((o) => o.status === filter) : orders;
+  // matchesStatus: existing status filter ko preserve karta hai.
+  // orderId: tumhare UI mein jo last 6 characters uppercase mein show ho rahe hain, wahi search ke liye use honge.
+  // includes(): partial matching karta hai.
+  // matchesStatus && matchesSearch: dono conditions true honi chahiye.
+  const visibleOrders = orders.filter((o) => {
+    const matchesStatus = !filter || o.status === filter;
+
+    const orderId = o._id.slice(-6).toUpperCase();
+    const matchesSearch = orderId.includes(searchId.trim().toUpperCase());
+
+    return matchesStatus && matchesSearch;
+  });
 
   return (
     <div className="container-page py-8">
       <h1 className="text-3xl font-extrabold">Orders</h1>
       <p className="mb-6 mt-1 text-muted">{orders.length} orders in total</p>
       <AdminNav />
+      <div className="mb-5">
+        <input
+          type="text"
+          value={searchId}
+          onChange={(e) => setSearchId(e.target.value)}
+          placeholder="Search order by ID..."
+          className="input w-full sm:max-w-md"
+        />
+      </div>
 
       <div className="mb-5 flex flex-wrap gap-2">
         {["", ...statuses].map((s) => (
