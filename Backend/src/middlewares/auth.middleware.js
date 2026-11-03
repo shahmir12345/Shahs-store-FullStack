@@ -7,7 +7,7 @@ exports.protect = async (req, res, next) => {
         const header = req.headers.authorization
 
         if(!header || !header.startsWith('Bearer ')){
-            res.status(401).json({message: 'Unauthorized, No Token'})
+           return res.status(401).json({message: 'Unauthorized, No Token'})
         }
 
         //Split(' ') -> ["Bearer", "ABC123"][1] -> "ABC123"
@@ -19,7 +19,7 @@ exports.protect = async (req, res, next) => {
 
         const user = await userModel.findById(decoded.id).select('-password')
         if(!user){
-            res.status(401).json({message: 'User not found'})
+           return res.status(401).json({message: 'User not found'})
         }
 
         // JWT mein iat (token kab bana) hota hai. Password badalne se pehle ke saare purane tokens ab reject ho jate hain, to agar kisi ne account hijack kiya tha to uska token bhi kaam nahi karega. Message “Not authorized” se shuru hota hai, to frontend ka axios interceptor khud logout karke login page par bhej dega. Seconds mein compare isliye kiya ke reset ke fauran baad naya login token ghalti se reject na ho.
@@ -39,7 +39,7 @@ exports.protect = async (req, res, next) => {
         next()
 
     }catch (error) {
-        res.status(401).json({message: 'Unauthorized, Token Failed'})
+       return res.status(401).json({message: 'Unauthorized, Token Failed'})
     }
 }
 

@@ -191,7 +191,7 @@ const ManageProducts = () => {
             </button>
           </div>
 
-          {error && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700 sm:col-span-2">{error}</p>}
+          {/* {error && <p className="rounded-lg bg-red-50 p-3 text-sm text-red-700 sm:col-span-2">{error}</p>} */}
 
           <div>
             <label className="mb-1.5 block text-sm font-medium">Name</label>
