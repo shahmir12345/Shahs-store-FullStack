@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { User, Mail, Lock } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import AuthLayout from "../components/AuthLayout";
 import { GoogleLogin } from "@react-oauth/google";
+import { User, Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
   const { register, googleLogin } = useAuth();
@@ -12,6 +12,7 @@ const Signup = () => {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -34,7 +35,7 @@ const Signup = () => {
 
   return (
     <AuthLayout
-      logoSide="left"
+      variant="signup"
       title="Create your account"
       subtitle="It only takes a minute"
       footer={
@@ -86,14 +87,22 @@ const Signup = () => {
             <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
             <input
               name="password"
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="At least 6 characters"
               value={form.password}
               onChange={handleChange}
-              className="input !pl-10"
+              className="input !pl-10 !pr-11"
               minLength={6}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
         </div>
 

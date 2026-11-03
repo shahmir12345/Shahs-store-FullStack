@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Mail, Lock } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import AuthLayout from "../components/AuthLayout";
 import { GoogleLogin } from "@react-oauth/google";
+import { Mail, Lock, Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const { login, googleLogin } = useAuth();
@@ -13,6 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,7 +36,7 @@ const Login = () => {
 
   return (
     <AuthLayout
-      logoSide="left"
+      variant="login"
       title="Welcome back"
       subtitle="Log in to continue shopping"
       footer={
@@ -70,13 +71,21 @@ const Login = () => {
           <div className="relative">
             <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted" />
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="Your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="input !pl-10"
+              className="input !pl-10 !pr-11"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
           </div>
           <Link to="/forgot-password" className="text-sm self-end font-semibold text-brand-600 hover:underline">
             Forgot password?

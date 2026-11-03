@@ -26,3 +26,9 @@ exports.uploadLimiter = make(
   60,
   "Too many uploads. Please slow down."
 );
+
+exports.aiLimiter = make(
+  60,
+  30,
+  "Too many AI requests. Please try again later."
+);

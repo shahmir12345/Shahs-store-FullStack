@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Pencil, Trash2, X, ImagePlus } from "lucide-react";
+import { Plus, Pencil, Trash2, X, ImagePlus, Sparkles } from "lucide-react";
 import api from "../../api/axios";
 import AdminNav from "../../components/AdminNav";
 
@@ -21,6 +21,8 @@ const ManageProducts = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [aiDetails, setAiDetails] = useState("");
+  const [generating, setGenerating] = useState(false);
 
   const fetchProducts = async () => {
     try {
@@ -39,6 +41,29 @@ const ManageProducts = () => {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleGenerate = async () => {
+    if (!form.name.trim()) {
+      setError("Enter the product name first");
+      return;
+    }
+    if (form.description && !window.confirm("Replace the current description?")) return;
+
+    setError("");
+    setGenerating(true);
+    try {
+      const { data } = await api.post("/ai/description", {
+        name: form.name,
+        category: form.category,
+        details: aiDetails,
+      });
+      setForm((prev) => ({ ...prev, description: data.description }));
+    } catch (err) {
+      setError(err.response?.data?.message || "Could not generate description");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleFiles = async (e) => {
@@ -82,6 +107,7 @@ const ManageProducts = () => {
     setEditingId(null);
     setForm(emptyForm);
     setError("");
+    setAiDetails("");
   };
 
   const handleSubmit = async (e) => {
@@ -123,6 +149,7 @@ const ManageProducts = () => {
       stock: p.stock,
       images: p.image || "",
     });
+    setAiDetails("");
     setShowForm(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -232,8 +259,39 @@ const ManageProducts = () => {
             </div>
           </div>
           <div className="sm:col-span-2">
-            <label className="mb-1.5 block text-sm font-medium">Description</label>
-            <textarea name="description" rows="3" value={form.description} onChange={handleChange} className="input" required />
+            <label className="mb-1.5 block text-sm font-medium">
+              Key features{" "}
+              <span className="font-normal text-muted">(optional, only helps the AI, not saved)</span>
+            </label>
+            <input
+              value={aiDetails}
+              onChange={(e) => setAiDetails(e.target.value)}
+              maxLength={300}
+              placeholder="e.g. lightweight mesh, rubber sole, available in black"
+              className="input"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <div className="mb-1.5 flex items-center justify-between gap-3">
+              <label className="block text-sm font-medium">Description</label>
+              <button
+                type="button"
+                onClick={handleGenerate}
+                disabled={generating}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:underline disabled:opacity-50"
+              >
+                <Sparkles size={16} /> {generating ? "Generating..." : "Generate with AI"}
+              </button>
+            </div>
+            <textarea
+              name="description"
+              rows="4"
+              value={form.description}
+              onChange={handleChange}
+              className="input"
+              required
+            />
           </div>
 
           <div className="flex gap-2 sm:col-span-2">

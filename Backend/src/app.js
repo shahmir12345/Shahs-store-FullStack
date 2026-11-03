@@ -8,6 +8,7 @@ const orderRouter = require('./routes/order.routes')
 const cartRouter = require('./routes/cart.routes')
 const adminRouter = require("./routes/admin.routes");
 const uploadImageRouter = require("./routes/upload.routes")
+const aiRouter = require("./routes/ai.routes")
 
 const app = express()
 
@@ -36,6 +37,7 @@ app.use('/users', userRouter)
 app.use('/products', productRouter)
 app.use('/cart', cartRouter)
 app.use('/orders', orderRouter)
+app.use("/ai", aiRouter);
 
 app.get('/', function(req, res){
     res.send('API is running...')

@@ -96,3 +96,60 @@ Yeh Login, Signup aur Checkout ke inputs ke liye reusable style hai.
 .pop-in {
   animation: pop-in 0.5s ease-out both;
 }
+
+
+/* Typing cursor */
+@keyframes type-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.type-cursor {
+  display: inline-block;
+  width: 3px;
+  height: 1em;
+  margin-left: 4px;
+  vertical-align: -0.12em;
+  animation: type-blink 1s steps(1) infinite;
+}
+
+/* Login logo: float */
+@keyframes logo-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+.logo-float {
+  animation: logo-float 5s ease-in-out infinite;
+}
+
+/* Signup logo: 3D flip in, then swing, plus glow */
+@keyframes logo-spin-in {
+  from { transform: perspective(900px) rotateY(-180deg) scale(0.5); opacity: 0; }
+  to   { transform: perspective(900px) rotateY(0deg) scale(1); opacity: 1; }
+}
+.logo-spin-in {
+  animation: logo-spin-in 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes logo-swing {
+  0%, 100% { transform: perspective(900px) rotateY(0deg) rotateX(0deg); }
+  25%      { transform: perspective(900px) rotateY(16deg) rotateX(4deg); }
+  75%      { transform: perspective(900px) rotateY(-16deg) rotateX(-4deg); }
+}
+.logo-swing {
+  animation: logo-swing 7s ease-in-out 1.2s infinite;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { transform: scale(0.9); opacity: 0.35; }
+  50%      { transform: scale(1.15); opacity: 0.65; }
+}
+.glow-pulse {
+  animation: glow-pulse 4s ease-in-out infinite;
+}
+
+/* Jin users ne device mein animations band ki hain unke liye */
+@media (prefers-reduced-motion: reduce) {
+  .logo-float, .logo-spin-in, .logo-swing, .glow-pulse, .type-cursor {
+    animation: none;
+  }
+}
